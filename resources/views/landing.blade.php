@@ -27,7 +27,17 @@
                     </li>
                 </ul>
             </div>
-              <a class="btn btn-primary ms-3" href="{{ route('login') }}">Log in</a>
+            @auth
+                <div class="d-flex align-items-center ms-3">
+                    <span class="me-2">{{ Auth::user()->email }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                    </form>
+                </div>
+            @else
+                <a class="btn btn-primary ms-3" href="{{ route('login') }}">Log in</a>
+            @endauth
         </div>
     </nav>
 
