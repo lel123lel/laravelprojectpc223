@@ -34,11 +34,6 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary" href="{{ route('welcome') }}">
-                            &larr; Back
-                        </a>
-                    </li>
-                    <li class="nav-item me-2">
                         <a class="btn btn-outline-secondary" href="{{ url('/') }}">
                             Home
                         </a>
@@ -57,6 +52,8 @@
     </nav>
 
     <div class="container">
+        <!-- Custom Alert -->
+        <div id="customAlert" class="alert d-none" role="alert"></div>
         <h1 class="mb-4">All Lost Items</h1>
         @if($lostItems->isEmpty())
             <p class="text-center text-muted">No lost items reported yet.</p>
@@ -81,12 +78,38 @@
                                 <p class="card-text"><strong>Item Name:</strong> {{ $item->item_name }}</p>
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Date Lost:</strong> {{ $item->date_lost }}</p>
-                                <div class="d-flex justify-content-center mt-3">
-                                    <a href="{{ route('lost.edit', $item->id) }}" class="btn btn-success btn-sm me-2">Edit</a>
-                                    <form action="{{ route('lost.destroy', $item->id) }}" method="POST" style="display:inline;">
+                                <div class="d-flex justify-content-center gap-2 mt-3">
+                                    <a href="{{ route('lost.edit', $item->id) }}" class="btn btn-sm btn-success">Edit</a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                                        Delete
+                                    </button>
+                                    <form class="found-form" data-item="{{ $item->id }}" action="#" method="POST" style="display:inline;">
+                                        {{-- TODO: Implement mark as found route --}}
+                                        @csrf
+                                        <button type="button" class="btn btn-sm btn-warning" disabled>Mark as Found</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal-{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ $item->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel-{{ $item->id }}">Confirm Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this lost item?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form class="delete-form" data-item="{{ $item->id }}" action="{{ route('lost.destroy', $item->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this item?')">Delete</button>
+                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                                     </form>
                                 </div>
                             </div>
@@ -97,5 +120,19 @@
         @endif
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Show custom alert
+    function showCustomAlert(message, type = 'success') {
+        const alertDiv = document.getElementById('customAlert');
+        alertDiv.className = 'alert alert-' + type;
+        alertDiv.textContent = message;
+        alertDiv.classList.remove('d-none');
+        setTimeout(() => {
+            alertDiv.classList.add('d-none');
+        }, 2500);
+    }
+
+    // You can add similar logic for edit/mark as found if needed
+    </script>
 </body>
 </html>

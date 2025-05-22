@@ -38,28 +38,6 @@
     }
 </style>
 
-<!-- Navbar (same as landing.blade.php) -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light w-100 mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Lost & Found</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav align-items-center">
-                @auth
-                <li class="nav-item me-2">
-                    <a class="btn btn-outline-success" href="{{ route('admin') }}">
-                        Inventory
-                    </a>
-                </li>
-                @endauth
-                @guest
-                @endguest
-            </ul>
-        </div>
-    </div>
-</nav>
 
 
 <div class="container">
@@ -165,22 +143,19 @@
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Last Seen Location:</strong> {{ $item->location }}</p>
                                 <p class="card-text"><strong>Contact Info:</strong> {{ $item->contact_info }}</p>
-                                @auth
                                 <div class="d-flex justify-content-center mt-3">
-                                    <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
+                                    <button type="button" class="btn btn-success btn-lg me-3" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
                                         Edit
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                                    <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
                                         Delete
                                     </button>
                                 </div>
-                                @endauth
                             </div>
                         </div>
                     </div>
 
                     <!-- Reference ID Modal -->
-                    @auth
                     <div class="modal fade" id="referenceModal-{{ $item->id }}" tabindex="-1" aria-labelledby="referenceModalLabel-{{ $item->id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -223,7 +198,6 @@
                             </div>
                         </div>
                     </div>
-                    @endauth
                 @endforeach
             </div>
         @endif

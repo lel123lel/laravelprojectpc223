@@ -25,6 +25,11 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('lost.index') ? 'active' : '' }}" href="{{ route('lost.index') }}">Lost Items</a>
                     </li>
+                    @auth
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin') }}">Admin</a>
+                    </li>
+                    @endauth
                 </ul>
             </div>
             @auth

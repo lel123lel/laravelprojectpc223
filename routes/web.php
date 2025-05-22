@@ -20,21 +20,15 @@ Route::delete('/lost/{id}', [LostController::class, 'destroy'])->name('lost.dest
 Route::post('/lost/{id}/verify-reference', [LostController::class, 'verifyReference'])->name('lost.verifyReference');
 Route::post('/lost/{id}/verify-delete-reference', [LostController::class, 'verifyDeleteReference'])->name('lost.verifyDeleteReference');
 
-// Welcome panel route (protected)
-Route::get('/welcome', function () {
-    $lostItems = \App\Models\LostItem::all();
-    return view('welcome', compact('lostItems'));
-})->middleware('auth')->name('welcome');
-
 // Admin panel route (protected)
 Route::get('/admin', function () {
     $lostItems = \App\Models\LostItem::all();
     return view('admin', compact('lostItems'));
 })->middleware('auth')->name('admin');
 
-// After login, redirect to welcome panel
+// After login, redirect to admin panel
 Route::get('/home', function () {
-    return redirect()->route('welcome');
+    return redirect()->route('admin');
 });
 
 Auth::routes();
