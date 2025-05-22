@@ -31,15 +31,9 @@ Route::get('/admin', function () {
     return view('admin', compact('lostItems'));
 })->middleware('auth')->name('admin');
 
-// After login, redirect to welcome panel
-Auth::routes([
-    'register' => false // Optional: disable registration if only admins log in
-]);
-
+// After login, redirect to admin panel
 Route::get('/home', function () {
-    return redirect()->route('welcome');
+    return redirect()->route('admin');
 });
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
