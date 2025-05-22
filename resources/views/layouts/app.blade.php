@@ -27,7 +27,7 @@
                     </li>
                 </ul>
             </div>
-            <a class="btn btn-primary ms-3" href="#">Login</a> <!-- Login button on the far right -->
+             <a class="btn btn-primary ms-3" href="{{ route('login') }}">Log in</a>
         </div>
     </nav>
     <!-- Content -->

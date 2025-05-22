@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LostController;
 use App\Models\LostItem;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     $lostItems = LostItem::all(); // Retrieve all lost items
@@ -18,3 +19,27 @@ Route::put('/lost/{id}', [LostController::class, 'update'])->name('lost.update')
 Route::delete('/lost/{id}', [LostController::class, 'destroy'])->name('lost.destroy');
 Route::post('/lost/{id}/verify-reference', [LostController::class, 'verifyReference'])->name('lost.verifyReference');
 Route::post('/lost/{id}/verify-delete-reference', [LostController::class, 'verifyDeleteReference'])->name('lost.verifyDeleteReference');
+
+// Welcome panel route (protected)
+Route::get('/welcome', function () {
+    return view('welcome');
+})->middleware('auth')->name('welcome');
+
+// Admin panel route (protected)
+Route::get('/admin', function () {
+    $lostItems = \App\Models\LostItem::all();
+    return view('admin', compact('lostItems'));
+})->middleware('auth')->name('admin');
+
+// After login, redirect to welcome panel
+Auth::routes([
+    'register' => false // Optional: disable registration if only admins log in
+]);
+
+Route::get('/home', function () {
+    return redirect()->route('welcome');
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

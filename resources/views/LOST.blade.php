@@ -38,7 +38,11 @@
     }
 </style>
 
+<!-- Navbar (same as landing.blade.php) -->
+
+
 <div class="container">
+    {{-- Removed duplicate Log in button. Use only the navbar/upper right button for login --}}
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
