@@ -22,7 +22,8 @@ Route::post('/lost/{id}/verify-delete-reference', [LostController::class, 'verif
 
 // Welcome panel route (protected)
 Route::get('/welcome', function () {
-    return view('welcome');
+    $lostItems = \App\Models\LostItem::all();
+    return view('welcome', compact('lostItems'));
 })->middleware('auth')->name('welcome');
 
 // Admin panel route (protected)
@@ -31,9 +32,9 @@ Route::get('/admin', function () {
     return view('admin', compact('lostItems'));
 })->middleware('auth')->name('admin');
 
-// After login, redirect to admin panel
+// After login, redirect to welcome panel
 Route::get('/home', function () {
-    return redirect()->route('admin');
+    return redirect()->route('welcome');
 });
 
 Auth::routes();

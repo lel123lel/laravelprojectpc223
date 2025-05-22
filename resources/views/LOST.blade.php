@@ -39,6 +39,27 @@
 </style>
 
 <!-- Navbar (same as landing.blade.php) -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light w-100 mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Lost & Found</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center">
+                @auth
+                <li class="nav-item me-2">
+                    <a class="btn btn-outline-success" href="{{ route('admin') }}">
+                        Inventory
+                    </a>
+                </li>
+                @endauth
+                @guest
+                @endguest
+            </ul>
+        </div>
+    </div>
+</nav>
 
 
 <div class="container">
@@ -115,20 +136,27 @@
 
     <hr class="my-5">
 
-    <div class="container">
+    <!-- Move the lost items section up by reducing margin-top and margin-bottom -->
+    <div class="container" style="margin-top: 10px; margin-bottom: 20px;">
         <h2 class="text-center mb-4">Reported Lost Items</h2>
         @if($lostItems->isEmpty())
             <p class="text-center text-muted">No lost items reported yet.</p>
         @else
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
                 @foreach($lostItems as $item)
                     <div class="col">
-                        <div class="card shadow-sm">
-                            <div class="card-img-container">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-img-container" style="height:260px; background:#fff; display:flex; align-items:center; justify-content:center;">
                                 @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->item_name }}">
+                                    <img src="{{ asset('storage/' . $item->image) }}"
+                                         class="card-img-top"
+                                         alt="{{ $item->item_name }}"
+                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #f8f9fa;">
                                 @else
-                                    <img src="{{ asset('storage/no-image.png') }}" class="card-img-top" alt="No Image">
+                                    <img src="{{ asset('storage/no-image.png') }}"
+                                         class="card-img-top"
+                                         alt="No Image"
+                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; background: #f8f9fa;">
                                 @endif
                             </div>
                             <div class="card-body">
@@ -137,6 +165,7 @@
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Last Seen Location:</strong> {{ $item->location }}</p>
                                 <p class="card-text"><strong>Contact Info:</strong> {{ $item->contact_info }}</p>
+                                @auth
                                 <div class="d-flex justify-content-center mt-3">
                                     <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
                                         Edit
@@ -145,11 +174,13 @@
                                         Delete
                                     </button>
                                 </div>
+                                @endauth
                             </div>
                         </div>
                     </div>
 
                     <!-- Reference ID Modal -->
+                    @auth
                     <div class="modal fade" id="referenceModal-{{ $item->id }}" tabindex="-1" aria-labelledby="referenceModalLabel-{{ $item->id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -192,6 +223,7 @@
                             </div>
                         </div>
                     </div>
+                    @endauth
                 @endforeach
             </div>
         @endif
@@ -200,11 +232,71 @@
 @endsection
 
 @section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.getElementById('lostItemForm')?.addEventListener('submit', function(e) {
-        let submitButton = this.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.innerHTML = 'Submitting...';
+$(function() {
+    // Add Lost Item via Ajax
+    $('#lostItemForm').on('submit', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        let formData = new FormData(this);
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#lostFormModal').modal('hide');
+                form[0].reset();
+                location.reload(); // For simplicity, reload. For full Ajax, update DOM here.
+            },
+            error: function(xhr) {
+                alert('Error adding lost item.');
+            }
+        });
     });
+
+    // Edit Lost Item via Ajax
+    $('form[id^="editLostItemForm-"]').on('submit', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        let formData = new FormData(this);
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('.modal').modal('hide');
+                alert('Lost item updated successfully.');
+                location.reload(); // For simplicity, reload. For full Ajax, update DOM here.
+            },
+            error: function(xhr) {
+                alert('Error editing lost item.');
+            }
+        });
+    });
+
+    // Delete Lost Item via Ajax
+    $('form[id^="deleteLostItemForm-"]').on('submit', function(e) {
+        e.preventDefault();
+        let form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            method: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                $('.modal').modal('hide');
+                alert('Lost item deleted successfully.');
+                location.reload(); // For simplicity, reload. For full Ajax, remove item from DOM.
+            },
+            error: function(xhr) {
+                alert('Error deleting lost item.');
+            }
+        });
+    });
+});
 </script>
 @endsection
