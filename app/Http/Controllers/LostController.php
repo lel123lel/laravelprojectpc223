@@ -139,4 +139,30 @@ class LostController extends Controller
 
         return redirect()->back()->withErrors(['reference_id' => 'Invalid Reference ID.']);
     }
+
+    // Add this method at the end of your LostController class (before the last closing bracket)
+    public function markAsFound($id)
+    {
+        $lostItem = LostItem::findOrFail($id);
+        $lostItem->status = 'found';
+        $lostItem->found_at = now();
+        $lostItem->save();
+
+        return redirect()->back()->with('success', 'Item marked as found!');
+    }
+
+    public function ajaxMarkAsFound($id)
+    {
+        $lostItem = \App\Models\LostItem::findOrFail($id);
+        $lostItem->status = 'found';
+        $lostItem->found_at = now();
+        $lostItem->save();
+
+        return response()->json([
+            'success' => true,
+            'id' => $lostItem->id,
+            'status' => $lostItem->status,
+            'found_at' => $lostItem->found_at,
+        ]);
+    }
 }

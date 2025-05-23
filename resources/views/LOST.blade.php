@@ -60,7 +60,7 @@
 
     <div class="text-center my-4">
         <h1 class="display-5">Lost Something?</h1>
-        <p class="lead">Report your lost items here and help us reconnect you with your belongings.</p>
+        <p class="lead">Report your lost items and we'll reconnect you with your belongings.</p>
         <button type="button" class="btn btn-success btn-lg btn-custom" data-bs-toggle="modal" data-bs-target="#lostFormModal">
             Post Lost Item
         </button>
@@ -143,13 +143,36 @@
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Last Seen Location:</strong> {{ $item->location }}</p>
                                 <p class="card-text"><strong>Contact Info:</strong> {{ $item->contact_info }}</p>
-                                <div class="d-flex justify-content-center mt-3">
-                                    <button type="button" class="btn btn-success btn-lg me-3" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
-                                        Edit
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
-                                        Delete
-                                    </button>
+                                <div class="d-flex justify-content-center mt-3 gap-2">
+                                    @auth
+                                        <button type="button" class="btn btn-success btn-lg me-2" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
+                                            Edit
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-lg me-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                                            Delete
+                                        </button>
+                                    @endauth
+
+                                    @if(isset($item->status) && $item->status === 'found')
+                                        <span class="d-inline-flex align-items-center">
+                                            <span class="btn btn-success btn-lg" style="pointer-events: none; cursor: default;">Item Found</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#28a745" class="bi bi-check-circle-fill ms-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                                                <circle cx="8" cy="8" r="8" fill="#fff"/>
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 11.03a.75.75 0 0 0 1.07 0l3.992-3.992a.75.75 0 1 0-1.06-1.06L7.5 9.44 6.03 7.97a.75.75 0 1 0-1.06 1.06l1.997 1.997z"/>
+                                            </svg>
+                                        </span>
+                                    @else
+                                        <span class="d-inline-flex align-items-center">
+                                            <span class="btn btn-warning btn-lg" style="pointer-events: none; cursor: default; color: #b45309; background-color: #facc15; border-color: #facc15; font-weight: 600;">
+                                                Item Not Found
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" class="bi bi-x-circle-fill ms-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                                                <circle cx="8" cy="8" r="8" fill="#fff"/>
+                                                <circle cx="8" cy="8" r="8" fill="#dc2626" fill-opacity="0.8"/>
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" fill="#000"/>
+                                            </svg>
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -209,21 +232,25 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(function() {
-    // Add Lost Item via Ajax
+    // ADD lost item via AJAX
     $('#lostItemForm').on('submit', function(e) {
         e.preventDefault();
-        let form = $(this);
-        let formData = new FormData(this);
+        let form = $(this)[0];
+        let formData = new FormData(form);
         $.ajax({
-            url: form.attr('action'),
+            url: $(this).attr('action'),
             method: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
+                // Optionally, close modal
                 $('#lostFormModal').modal('hide');
-                form[0].reset();
-                location.reload(); // For simplicity, reload. For full Ajax, update DOM here.
+                // Reload the lost items list via AJAX
+                reloadLostItems();
+                // Optionally, show a success alert
+                alert('Lost item reported successfully!');
+                form.reset();
             },
             error: function(xhr) {
                 alert('Error adding lost item.');
@@ -231,30 +258,8 @@ $(function() {
         });
     });
 
-    // Edit Lost Item via Ajax
-    $('form[id^="editLostItemForm-"]').on('submit', function(e) {
-        e.preventDefault();
-        let form = $(this);
-        let formData = new FormData(this);
-        $.ajax({
-            url: form.attr('action'),
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                $('.modal').modal('hide');
-                alert('Lost item updated successfully.');
-                location.reload(); // For simplicity, reload. For full Ajax, update DOM here.
-            },
-            error: function(xhr) {
-                alert('Error editing lost item.');
-            }
-        });
-    });
-
-    // Delete Lost Item via Ajax
-    $('form[id^="deleteLostItemForm-"]').on('submit', function(e) {
+    // DELETE lost item via AJAX
+    $(document).on('submit', 'form[action*="verifyDeleteReference"]', function(e) {
         e.preventDefault();
         let form = $(this);
         $.ajax({
@@ -263,14 +268,46 @@ $(function() {
             data: form.serialize(),
             success: function(response) {
                 $('.modal').modal('hide');
-                alert('Lost item deleted successfully.');
-                location.reload(); // For simplicity, reload. For full Ajax, remove item from DOM.
+                reloadLostItems();
+                alert('Lost item deleted successfully!');
             },
-            error: function(xhr) {
+            error: function() {
                 alert('Error deleting lost item.');
             }
         });
     });
+
+    // EDIT lost item via AJAX (after verifying reference, show edit form in modal, then submit via AJAX)
+    // You need to implement the edit modal and form if not present.
+    $(document).on('submit', 'form[action*="lost/update"]', function(e) {
+        e.preventDefault();
+        let form = $(this)[0];
+        let formData = new FormData(form);
+        $.ajax({
+            url: $(this).attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('.modal').modal('hide');
+                reloadLostItems();
+                alert('Lost item updated successfully!');
+            },
+            error: function() {
+                alert('Error updating lost item.');
+            }
+        });
+    });
+
+    // Reload lost items list via AJAX
+    function reloadLostItems() {
+        $.get("{{ route('lost.index') }}", function(data) {
+            // Replace the lost items container with the new HTML
+            let html = $(data).find('.container').eq(1).html();
+            $('.container').eq(1).html(html);
+        });
+    }
 });
 </script>
 @endsection

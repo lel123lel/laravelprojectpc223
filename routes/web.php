@@ -19,12 +19,21 @@ Route::put('/lost/{id}', [LostController::class, 'update'])->name('lost.update')
 Route::delete('/lost/{id}', [LostController::class, 'destroy'])->name('lost.destroy');
 Route::post('/lost/{id}/verify-reference', [LostController::class, 'verifyReference'])->name('lost.verifyReference');
 Route::post('/lost/{id}/verify-delete-reference', [LostController::class, 'verifyDeleteReference'])->name('lost.verifyDeleteReference');
+Route::post('/lost/{id}/mark-found', [LostController::class, 'markAsFound'])->name('lost.markFound');
+Route::post('/lost/{id}/ajax-mark-found', [LostController::class, 'ajaxMarkAsFound'])->name('lost.ajaxMarkFound');
 
 // Admin panel route (protected)
 Route::get('/admin', function () {
     $lostItems = \App\Models\LostItem::all();
     return view('admin', compact('lostItems'));
 })->middleware('auth')->name('admin');
+
+// Found Items History route (protected)
+Route::get('/found-history', function () {
+    // You should fetch found items from your model/table here
+    $foundItems = []; // Replace with actual query, e.g., FoundItem::all()
+    return view('found-history', compact('foundItems'));
+})->middleware('auth')->name('found.history');
 
 // After login, redirect to admin panel
 Route::get('/home', function () {
