@@ -81,16 +81,58 @@
                                 </span>
                             @endif
                             <div class="card-img-container">
-                                @if($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}"
-                                         class="card-img-top"
-                                         alt="{{ $item->item_name }}">
-                                @else
-                                    <img src="{{ asset('storage/no-image.png') }}"
-                                         class="card-img-top"
-                                         alt="No Image">
-                                @endif
-                            </div>
+    @if($item->image)
+        <img src="{{ asset('storage/' . $item->image) }}"
+             class="card-img-top"
+             alt="{{ $item->item_name }}"
+             data-bs-toggle="modal"
+             data-bs-target="#imageModal-{{ $item->id }}"
+             style="cursor:pointer; max-height: 240px; max-width: 100%; object-fit: contain;">
+    @else
+        <img src="{{ asset('storage/no-image.png') }}"
+             class="card-img-top"
+             alt="No Image"
+             data-bs-toggle="modal"
+             data-bs-target="#imageModal-{{ $item->id }}"
+             style="cursor:pointer; max-height: 240px; max-width: 100%; object-fit: contain;">
+    @endif
+</div>
+<div class="modal fade" id="imageModal-{{ $item->id }}" tabindex="-1" aria-labelledby="imageModalLabel-{{ $item->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0 position-relative p-0">
+            <div class="modal-body text-center p-0 position-relative" style="display: flex; justify-content: center; align-items: center;">
+                <div style="display: inline-block; position: relative;">
+                    <button type="button"
+                        class="d-flex align-items-center justify-content-center"
+                        data-bs-dismiss="modal" aria-label="Close"
+                        style="
+                            position: absolute;
+                            top: 12px;
+                            right: 12px;
+                            z-index: 10;
+                            background: #dc2626;
+                            border-radius: 50%;
+                            width: 38px;
+                            height: 38px;
+                            border: none;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" fill="#000"/>
+                        </svg>
+                    </button>
+                    <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('storage/no-image.png') }}"
+                         alt="{{ $item->item_name }}"
+                         style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); background: #fff; display: block;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                             <div class="card-body">
                                 <h5 class="card-title text-primary">{{ $item->name }}</h5>
                                 <p class="card-text"><strong>Item Name:</strong> {{ $item->item_name }}</p>
@@ -156,6 +198,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 @endforeach
             </div>
         @endif

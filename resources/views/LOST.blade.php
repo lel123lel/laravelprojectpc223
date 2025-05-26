@@ -127,14 +127,18 @@
                             <div class="card-img-container" style="height:260px; background:#fff; display:flex; align-items:center; justify-content:center;">
                                 @if($item->image)
                                     <img src="{{ asset('storage/' . $item->image) }}"
-                                         class="card-img-top"
+                                         class="card-img-top lost-img"
                                          alt="{{ $item->item_name }}"
-                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #f8f9fa;">
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#imageModal-{{ $item->id }}"
+                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #f8f9fa; cursor:pointer;">
                                 @else
                                     <img src="{{ asset('storage/no-image.png') }}"
-                                         class="card-img-top"
+                                         class="card-img-top lost-img"
                                          alt="No Image"
-                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; background: #f8f9fa;">
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#imageModal-{{ $item->id }}"
+                                         style="max-height: 240px; max-width: 100%; object-fit: contain; display: block; margin: auto; border-radius: 8px 8px 0 0; background: #f8f9fa; cursor:pointer;">
                                 @endif
                             </div>
                             <div class="card-body">
@@ -143,30 +147,37 @@
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Last Seen Location:</strong> {{ $item->location }}</p>
                                 <p class="card-text"><strong>Contact Info:</strong> {{ $item->contact_info }}</p>
-                                <div class="d-flex justify-content-center mt-3 gap-2">
-                                    @auth
-                                        <button type="button" class="btn btn-success btn-lg me-2" data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
-                                            Edit
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-lg me-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
-                                            Delete
-                                        </button>
-                                    @endauth
+                                <div class="d-flex justify-content-center align-items-center mt-3 gap-2 flex-wrap">
+                                    {{-- Edit Button (opens reference modal) --}}
+                                    <button type="button" class="btn btn-success btn-lg me-2"
+                                        data-bs-toggle="modal" data-bs-target="#referenceModal-{{ $item->id }}">
+                                        Edit
+                                    </button>
+                                    {{-- Delete Button (opens delete modal) --}}
+                                    <button type="button" class="btn btn-danger btn-lg me-2"
+                                        data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                                        Delete
+                                    </button>
 
+                                    {{-- Status Badge and Icon --}}
                                     @if(isset($item->status) && $item->status === 'found')
-                                        <span class="d-inline-flex align-items-center">
-                                            <span class="btn btn-success btn-lg" style="pointer-events: none; cursor: default;">Item Found</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#28a745" class="bi bi-check-circle-fill ms-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                                        <span class="d-inline-flex align-items-center ms-2">
+                                            <span class="btn btn-success btn-lg" style="pointer-events: none; cursor: default;">
+                                                Item Found
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#28a745"
+                                                class="bi bi-check-circle-fill ms-2" viewBox="0 0 16 16" style="vertical-align: middle;">
                                                 <circle cx="8" cy="8" r="8" fill="#fff"/>
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 11.03a.75.75 0 0 0 1.07 0l3.992-3.992a.75.75 0 1 0-1.06-1.06L7.5 9.44 6.03 7.97a.75.75 0 1 0-1.06 1.06l1.997 1.997z"/>
                                             </svg>
                                         </span>
                                     @else
-                                        <span class="d-inline-flex align-items-center">
+                                        <span class="d-inline-flex align-items-center ms-2">
                                             <span class="btn btn-warning btn-lg" style="pointer-events: none; cursor: default; color: #b45309; background-color: #facc15; border-color: #facc15; font-weight: 600;">
                                                 Item Not Found
                                             </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" class="bi bi-x-circle-fill ms-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" class="bi bi-x-circle-fill ms-2"
+                                                viewBox="0 0 16 16" style="vertical-align: middle;">
                                                 <circle cx="8" cy="8" r="8" fill="#fff"/>
                                                 <circle cx="8" cy="8" r="8" fill="#dc2626" fill-opacity="0.8"/>
                                                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" fill="#000"/>
@@ -217,6 +228,45 @@
                                         </div>
                                         <button type="submit" class="btn btn-danger w-100">Verify and Delete</button>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Modal for image preview --}}
+                    <div class="modal fade" id="imageModal-{{ $item->id }}" tabindex="-1" aria-labelledby="imageModalLabel-{{ $item->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content bg-transparent border-0 position-relative p-0">
+                                <div class="modal-body text-center p-0 position-relative" style="display: flex; justify-content: center; align-items: center;">
+                                    <div style="display: inline-block; position: relative;">
+                                        {{-- Close button, sized and positioned relative to the image --}}
+                                        <button type="button"
+                                            class="d-flex align-items-center justify-content-center"
+                                            data-bs-dismiss="modal" aria-label="Close"
+                                            style="
+                                                position: absolute;
+                                                top: 12px;
+                                                right: 12px;
+                                                z-index: 10;
+                                                background: #dc2626;
+                                                border-radius: 50%;
+                                                width: 38px;
+                                                height: 38px;
+                                                border: none;
+                                                box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                                                padding: 0;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                            ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+                                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" fill="#000"/>
+                                            </svg>
+                                        </button>
+                                        <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('storage/no-image.png') }}"
+                                             alt="{{ $item->item_name }}"
+                                             style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); background: #fff; display: block;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
