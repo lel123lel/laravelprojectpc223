@@ -105,6 +105,15 @@
                             <label for="location" class="form-label">Location</label>
                             <input type="text" class="form-control" id="location" name="location" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="date_lost" class="form-label">Date Lost</label>
+                            <input type="date" class="form-control" id="date_lost" name="date_lost_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="time_lost" class="form-label">Time Lost</label>
+                            <input type="time" class="form-control" id="time_lost" name="date_lost_time" required>
+                        </div>
+                        <!-- JS will combine these into a hidden date_lost field -->
                         <button type="submit" class="btn btn-primary w-100">Submit</button>
                     </form>
                 </div>
@@ -147,6 +156,7 @@
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
                                 <p class="card-text"><strong>Last Seen Location:</strong> {{ $item->location }}</p>
                                 <p class="card-text"><strong>Contact Info:</strong> {{ $item->contact_info }}</p>
+                                <p class="card-text"><strong>Date Lost:</strong> {{ \Carbon\Carbon::parse($item->date_lost)->format('F d, Y h:i A') }}</p>
                                 <div class="d-flex justify-content-center align-items-center mt-3 gap-2 flex-wrap">
                                     {{-- Edit Button (opens reference modal) --}}
                                     <button type="button" class="btn btn-success btn-lg me-2"
@@ -275,6 +285,15 @@
             </div>
         @endif
     </div>
+
+    {{-- Place this after @endforeach --}}
+    <div class="modal fade" id="editLostItemModal" tabindex="-1" aria-labelledby="editLostItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" id="editLostItemModalContent">
+                {{-- AJAX-loaded content goes here --}}
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -294,11 +313,8 @@ $(function() {
             processData: false,
             contentType: false,
             success: function(response) {
-                // Optionally, close modal
                 $('#lostFormModal').modal('hide');
-                // Reload the lost items list via AJAX
                 reloadLostItems();
-                // Optionally, show a success alert
                 alert('Lost item reported successfully!');
                 form.reset();
             },
@@ -327,36 +343,68 @@ $(function() {
         });
     });
 
-    // EDIT lost item via AJAX (after verifying reference, show edit form in modal, then submit via AJAX)
-    // You need to implement the edit modal and form if not present.
-    $(document).on('submit', 'form[action*="lost/update"]', function(e) {
+    // Handle Reference ID verification for Edit (show edit form in modal via AJAX)
+    $(document).on('submit', 'form[action*="verifyReference"]', function(e) {
         e.preventDefault();
-        let form = $(this)[0];
-        let formData = new FormData(form);
+        let form = $(this);
         $.ajax({
-            url: $(this).attr('action'),
+            url: form.attr('action'),
             method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
+            data: form.serialize(),
             success: function(response) {
                 $('.modal').modal('hide');
-                reloadLostItems();
-                alert('Lost item updated successfully!');
+                $('#editLostItemModalContent').html(response);
+                $('#editLostItemModal').modal('show');
             },
-            error: function() {
-                alert('Error updating lost item.');
+            error: function(xhr) {
+                alert('Invalid Reference ID or error. Please try again.');
             }
         });
+    });
+
+    // EDIT lost item (submit edit form in modal, NO AJAX, just normal submit)
+    $(document).on('submit', 'form[action*="lost/update"]', function() {
+        // Let the form submit normally (no preventDefault, no AJAX)
+        // The controller should redirect to lost.index after update
     });
 
     // Reload lost items list via AJAX
     function reloadLostItems() {
         $.get("{{ route('lost.index') }}", function(data) {
-            // Replace the lost items container with the new HTML
             let html = $(data).find('.container').eq(1).html();
             $('.container').eq(1).html(html);
         });
+    }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let now = new Date();
+    let pad = n => n < 10 ? '0' + n : n;
+    let formatted = now.getFullYear() + '-' +
+        pad(now.getMonth() + 1) + '-' +
+        pad(now.getDate()) + ' ' +
+        pad(now.getHours()) + ':' +
+        pad(now.getMinutes()) + ':' +
+        pad(now.getSeconds());
+    document.getElementById('date_lost').value = formatted;
+});
+</script>
+<script>
+document.getElementById('lostItemForm').addEventListener('submit', function(e) {
+    let date = document.getElementById('date_lost').value;
+    let time = document.getElementById('time_lost').value;
+    if(date && time) {
+        let combined = date + ' ' + time + ':00';
+        let hidden = document.getElementById('combined_date_lost');
+        if(!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'date_lost';
+            hidden.id = 'combined_date_lost';
+            this.appendChild(hidden);
+        }
+        hidden.value = combined;
     }
 });
 </script>

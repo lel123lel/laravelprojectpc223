@@ -37,6 +37,9 @@ class LostController extends Controller
             $code .= $characters[rand(0, strlen($characters) - 1)];
         }
 
+        $data = $request->all();
+        // Use the provided date_lost from the hidden field
+        $data['date_lost'] = $request->input('date_lost');
         // Ensure all validated data, including 'name', is passed to the model
         $lostItem = new LostItem($validatedData);
         $lostItem->reference_id = $code;
@@ -90,7 +93,7 @@ class LostController extends Controller
 
         $lostItem->save();
 
-        return redirect()->route('lost.index')->with('success', 'Lost item updated successfully.');
+        return redirect()->route('lost.index')->with('success', 'Your lost item has been edited successfully!');
     }
 
     public function destroy($id)

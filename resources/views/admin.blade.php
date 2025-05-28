@@ -137,7 +137,7 @@
                                 <h5 class="card-title text-primary">{{ $item->name }}</h5>
                                 <p class="card-text"><strong>Item Name:</strong> {{ $item->item_name }}</p>
                                 <p class="card-text"><strong>Description:</strong> {{ $item->description }}</p>
-                                <p class="card-text"><strong>Date Lost:</strong> {{ $item->date_lost }}</p>
+                                <p class="card-text"><strong>Date Lost:</strong> {{ \Carbon\Carbon::parse($item->date_lost)->format('F d, Y h:i A') }}</p>
                                 <div class="d-flex justify-content-center gap-2 mt-3">
                                     {{-- Replace the Edit button in the button row with this improved version --}}
                                     <a href="{{ route('lost.edit', $item->id) }}" class="btn btn-primary btn-sm d-flex align-items-center px-3 py-2" style="font-weight:600;">
@@ -267,7 +267,7 @@
             });
         });
 
-        // ...other existing code...
+      
     });
 </script>
 </body>
