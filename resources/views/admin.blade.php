@@ -6,15 +6,59 @@
     <title>Admin Panel - Lost & Found</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background: linear-gradient(135deg, #1a2233 0%, #28416e 100%) fixed;
+            color: #f1f1f1;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #22325a !important;
+        }
+        .navbar .navbar-brand,
+        .navbar .navbar-nav .nav-link {
+            color: #f1f1f1 !important;
+        }
+        .navbar .navbar-nav .nav-link.active {
+            color: #4b6fae !important;
+            font-weight: 600;
+        }
+        .navbar .navbar-nav .nav-link:hover {
+            color: #28416e !important;
+        }
+        .btn-primary {
+            background-color: #28416e;
+            border-color: #28416e;
+            color: #f1f1f1;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #3a5a99;
+            border-color: #3a5a99;
+            color: #f1f1f1;
+        }
+        .btn-outline-secondary {
+            color: #28416e;
+            border-color: #28416e;
+        }
+        .btn-outline-secondary:hover, .btn-outline-secondary:focus {
+            background-color: #28416e;
+            color: #f1f1f1;
+        }
+        .card {
+            background: #22325a;
+            color: #f1f1f1;
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 16px rgba(40,65,110,0.15);
+        }
         .card-img-container {
             position: relative;
             height: 250px;
             width: 100%;
-            background-color: #f8f9fa;
+            background-color: #1a2233;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #28416e;
         }
         .card-img-top {
             width: 100%;
@@ -22,20 +66,80 @@
             object-fit: cover;
             border-radius: 8px 8px 0 0;
         }
-        /* Make the card body area bigger for better visuals */
         .card-body {
             min-height: 220px;
             padding-bottom: 2.5rem;
+            color: #f1f1f1;
         }
-        /* Make the button/icon row more spacious */
         .card-body .d-flex.gap-2 {
             gap: 1.25rem !important;
             margin-top: 1.25rem !important;
         }
+        .form-control {
+            background: #1a2233;
+            color: #f1f1f1;
+            border: 1px solid #28416e;
+        }
+        .form-control:focus {
+            background: #22325a;
+            color: #f1f1f1;
+            border-color: #4b6fae;
+            box-shadow: 0 0 0 0.2rem rgba(40,65,110,0.15);
+        }
+        ::placeholder {
+            color: #b6c6e3 !important;
+            opacity: 1;
+        }
+        /* For Firefox */
+        input.form-control::-moz-placeholder {
+            color: #b6c6e3 !important;
+            opacity: 1;
+        }
+        /* For Internet Explorer */
+        input.form-control:-ms-input-placeholder {
+            color: #b6c6e3 !important;
+        }
+        /* For Edge */
+        input.form-control::-ms-input-placeholder {
+            color: #b6c6e3 !important;
+        }
+        /* For Chrome, Safari, Opera */
+        input.form-control::placeholder {
+            color: #b6c6e3 !important;
+            opacity: 1;
+        }
+        .modal-content {
+            background: #22325a;
+            color: #f1f1f1;
+            border-radius: 1rem;
+        }
+        .modal-header {
+            background: #28416e;
+            color: #f1f1f1;
+            border-radius: 1rem 1rem 0 0;
+            border-bottom: none;
+        }
+        .btn-close {
+            filter: invert(1) grayscale(1) brightness(1.5);
+        }
+        .alert {
+            background: #28416e;
+            color: #f1f1f1;
+            border: none;
+        }
+        h1, h2, h3, h4, h5, h6, label, .card-title, .card-text, .modal-title, .form-label, .btn, .navbar-brand, .nav-link, p, span, strong {
+            color: #f1f1f1 !important;
+        }
+        .text-primary {
+            color: #4b6fae !important;
+        }
+        .text-muted {
+            color: #b6c6e3 !important;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light w-100 mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light w-100 mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Lost & Found Items</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +155,7 @@
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-outline-danger">
+                            <button type="submit" class="btn btn-danger" style="color:#fff; font-weight:600;">
                                 Log out
                             </button>
                         </form>
@@ -60,11 +164,23 @@
             </div>
         </div>
     </nav>
-
     <div class="container">
         <!-- Custom Alert -->
         <div id="customAlert" class="alert d-none" role="alert"></div>
         <h1 class="mb-4">All Lost Items</h1>
+
+        <!-- Search Form -->
+        <form method="GET" action="{{ route('admin') }}" class="mb-4">
+            <div class="input-group" style="max-width: 400px; margin: 0 auto;">
+                <input type="text" name="search" class="form-control" placeholder="Search by Item Name or Reference ID" value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit">Search</button>
+                @if(request('search'))
+                    <a href="{{ route('admin') }}" class="btn btn-outline-secondary">Clear</a>
+                @endif
+            </div>
+        </form>
+        <!-- End Search Form -->
+
         @if($lostItems->isEmpty())
             <p class="text-center text-muted">No lost items reported yet.</p>
         @else
@@ -127,7 +243,7 @@
                     </button>
                     <img src="{{ $item->image ? asset('storage/' . $item->image) : asset('storage/no-image.png') }}"
                          alt="{{ $item->item_name }}"
-                         style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); background: #fff; display: block;">
+                         style="max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); background: #1a2233; display: block;">
                 </div>
             </div>
         </div>

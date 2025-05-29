@@ -86,6 +86,13 @@ class LostController extends Controller
         $lostItem->contact_info = $request->contact_info;
         $lostItem->location = $request->location;
 
+        // Combine date and time fields if present
+        if ($request->filled('date_lost_date') && $request->filled('date_lost_time')) {
+            $lostItem->date_lost = $request->input('date_lost_date') . ' ' . $request->input('date_lost_time') . ':00';
+        } elseif ($request->filled('date_lost')) {
+            $lostItem->date_lost = $request->input('date_lost');
+        }
+
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('lost_items', 'public');
             $lostItem->image = $imagePath;
@@ -167,5 +174,22 @@ class LostController extends Controller
             'status' => $lostItem->status,
             'found_at' => $lostItem->found_at,
         ]);
+    }
+
+    public function admin(Request $request)
+    {
+        $query = LostItem::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('item_name', 'like', "%{$search}%")
+                  ->orWhere('reference_id', 'like', "%{$search}%");
+            });
+        }
+
+        $lostItems = $query->orderByDesc('created_at')->get();
+
+        return view('admin', compact('lostItems'));
     }
 }

@@ -7,9 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            background: linear-gradient(135deg, #22325a 0%, #28416e 100%);
             border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(79,70,229,0.08);
+            box-shadow: 0 4px 24px rgba(40,65,110,0.12);
             padding: 3rem 1.5rem 2rem 1.5rem;
             margin-bottom: 2.5rem;
             text-align: center;
@@ -18,12 +18,12 @@
         }
         .hero-section h1 {
             font-weight: 800;
-            color: #4f46e5;
+            color: #28416e;
             letter-spacing: 2px;
         }
         .hero-section p {
             font-size: 1.25rem;
-            color: #3730a3;
+            color: #b6c6e3;
             margin-bottom: 2rem;
         }
         .hero-illustration {
@@ -39,14 +39,50 @@
             padding: 0.75rem 2.5rem;
             border-radius: 30px;
             font-weight: 600;
-            background: #4f46e5;
+            background: #28416e;
             border: none;
             color: #fff;
-            box-shadow: 0 2px 12px rgba(79,70,229,0.10);
+            box-shadow: 0 2px 12px rgba(40,65,110,0.10);
             transition: background 0.2s;
         }
         .hero-btn:hover, .hero-btn:focus {
-            background: #3730a3;
+            background: #3a5a99;
+            color: #fff;
+        }
+        .navbar {
+            background: #22325a !important;
+        }
+        .navbar-light .navbar-brand,
+        .navbar-light .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+        .navbar-light .navbar-nav .nav-link.active {
+            color: #4b6fae !important;
+            font-weight: 600;
+        }
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: #28416e !important;
+        }
+        .btn-primary {
+            background-color: #28416e;
+            border-color: #28416e;
+            color: #fff;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #3a5a99;
+            border-color: #3a5a99;
+            color: #fff;
+        }
+        .btn-outline-secondary {
+            color: #28416e;
+            border-color: #28416e;
+        }
+        .btn-outline-secondary:hover, .btn-outline-secondary:focus {
+            background-color: #28416e;
+            color: #fff;
+        }
+        body {
+            background: linear-gradient(135deg, #1a2233 0%, #28416e 100%) fixed;
             color: #fff;
         }
         @media (max-width: 768px) {
@@ -56,7 +92,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light w-100">
+    <nav class="navbar navbar-expand-lg navbar-light w-100">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Lost & Found</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +118,7 @@
                     <span class="me-2">{{ Auth::user()->email }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                        <button type="submit" class="btn btn-danger btn-sm" style="color:#fff; font-weight:600;">Logout</button>
                     </form>
                 </div>
             @else

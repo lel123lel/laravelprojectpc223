@@ -3,25 +3,27 @@
 @section('content')
 <style>
     .card {
-        height: 100%; /* Allow cards to adjust dynamically */
+        height: 100%;
         overflow: hidden;
-        border: 1px solid #ddd;
+        border: 1px solid #28416e;
         border-radius: 8px;
         transition: transform 0.2s, box-shadow 0.2s;
+        background: #22325a;
+        color: #f1f1f1;
     }
     .card:hover {
         transform: scale(1.02);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(40,65,110,0.2);
     }
     .card-img-container {
         position: relative;
-        height: 250px; /* Adjust image height */
+        height: 250px;
         width: 100%;
-        background-color: #f8f9fa;
+        background-color: #1a2233;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #28416e;
     }
     .card-img-top {
         width: 100%;
@@ -31,10 +33,82 @@
     }
     .card-body {
         padding: 20px;
+        color: #f1f1f1;
     }
     .btn-custom {
         border-radius: 20px;
         padding: 10px 20px;
+    }
+    .modal-content {
+        background: #22325a;
+        color: #f1f1f1;
+        border-radius: 1rem;
+    }
+    .modal-header {
+        background: #28416e;
+        color: #f1f1f1;
+        border-radius: 1rem 1rem 0 0;
+        border-bottom: none;
+    }
+    .btn-close {
+        filter: invert(1) grayscale(1) brightness(1.5);
+    }
+    .form-control {
+        background: #1a2233;
+        color: #f1f1f1;
+        border: 1px solid #28416e;
+    }
+    .form-control:focus {
+        background: #22325a;
+        color: #f1f1f1;
+        border-color: #4b6fae;
+        box-shadow: 0 0 0 0.2rem rgba(40,65,110,0.15);
+    }
+    .btn-primary {
+        background-color: #28416e;
+        border-color: #28416e;
+        color: #f1f1f1;
+        font-weight: 600;
+    }
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: #3a5a99;
+        border-color: #3a5a99;
+        color: #f1f1f1;
+    }
+    .btn-outline-secondary {
+        color: #28416e;
+        border-color: #28416e;
+    }
+    .btn-outline-secondary:hover, .btn-outline-secondary:focus {
+        background-color: #28416e;
+        color: #f1f1f1;
+    }
+    ::placeholder {
+        color: #b6c6e3 !important;
+        opacity: 1;
+    }
+    input.form-control::-moz-placeholder {
+        color: #b6c6e3 !important;
+        opacity: 1;
+    }
+    input.form-control:-ms-input-placeholder {
+        color: #b6c6e3 !important;
+    }
+    input.form-control::-ms-input-placeholder {
+        color: #b6c6e3 !important;
+    }
+    input.form-control::placeholder {
+        color: #b6c6e3 !important;
+        opacity: 1;
+    }
+    h1, h2, h3, h4, h5, h6, label, .card-title, .card-text, .modal-title, .form-label, .btn, .navbar-brand, .nav-link, p, span, strong {
+        color: #f1f1f1 !important;
+    }
+    .text-primary {
+        color: #4b6fae !important;
+    }
+    .text-muted {
+        color: #b6c6e3 !important;
     }
 </style>
 
@@ -69,52 +143,52 @@
     <!-- Modal -->
     <div class="modal fade" id="lostFormModal" tabindex="-1" aria-labelledby="lostFormModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content" style="background:#22325a; color:#fff; border-radius:1rem;">
+                <div class="modal-header" style="background:#28416e; color:#fff; border-radius:1rem 1rem 0 0; border-bottom:none;">
                     <h1 class="modal-title fs-5" id="lostFormModalLabel">Post About Your Lost Item</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(1) brightness(1.5);"></button>
                 </div>
                 <div class="modal-body">
                     <form id="lostItemForm" action="{{ route('lost.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                            <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="mb-3">
+                            <label for="name" class="form-label" style="color:#b6c6e3;">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="student_id" class="form-label">Student ID Number</label>
-                            <input type="text" class="form-control" id="student_id" name="student_id" required>
+                            <label for="student_id" class="form-label" style="color:#b6c6e3;">Student ID Number</label>
+                            <input type="text" class="form-control" id="student_id" name="student_id" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="item_name" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="item_name" name="item_name" required>
+                            <label for="item_name" class="form-label" style="color:#b6c6e3;">Item Name</label>
+                            <input type="text" class="form-control" id="item_name" name="item_name" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                            <label for="description" class="form-label" style="color:#b6c6e3;">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required style="background:#1a2233; color:#fff; border:1px solid #28416e;"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="contact_info" class="form-label">Contact Information</label>
-                            <input type="text" class="form-control" id="contact_info" name="contact_info" required>
+                            <label for="contact_info" class="form-label" style="color:#b6c6e3;">Contact Information</label>
+                            <input type="text" class="form-control" id="contact_info" name="contact_info" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="image" class="form-label">Upload Picture</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <label for="image" class="form-label" style="color:#b6c6e3;">Upload Picture</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="location" class="form-label">Location</label>
-                            <input type="text" class="form-control" id="location" name="location" required>
+                            <label for="location" class="form-label" style="color:#b6c6e3;">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="date_lost" class="form-label">Date Lost</label>
-                            <input type="date" class="form-control" id="date_lost" name="date_lost_date" required>
+                            <label for="date_lost" class="form-label" style="color:#b6c6e3;">Date Lost</label>
+                            <input type="date" class="form-control" id="date_lost" name="date_lost_date" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <div class="mb-3">
-                            <label for="time_lost" class="form-label">Time Lost</label>
-                            <input type="time" class="form-control" id="time_lost" name="date_lost_time" required>
+                            <label for="time_lost" class="form-label" style="color:#b6c6e3;">Time Lost</label>
+                            <input type="time" class="form-control" id="time_lost" name="date_lost_time" required style="background:#1a2233; color:#fff; border:1px solid #28416e;">
                         </div>
                         <!-- JS will combine these into a hidden date_lost field -->
-                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                        <button type="submit" class="btn btn-primary w-100" style="background:#28416e; border-color:#28416e; color:#fff; font-weight:600;">Submit</button>
                     </form>
                 </div>
             </div>

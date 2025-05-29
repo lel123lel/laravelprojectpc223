@@ -14,6 +14,9 @@ class LostItem extends Model
         'contact_info',
         'location',
         'image',
-        'reference_id'
+        'reference_id',
+        'date_lost', // <-- Add this line to allow mass assignment of date_lost
+        'status',
+        'found_at'
     ];
 }

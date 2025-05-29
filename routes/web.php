@@ -22,11 +22,8 @@ Route::post('/lost/{id}/verify-delete-reference', [LostController::class, 'verif
 Route::post('/lost/{id}/mark-found', [LostController::class, 'markAsFound'])->name('lost.markFound');
 Route::post('/lost/{id}/ajax-mark-found', [LostController::class, 'ajaxMarkAsFound'])->name('lost.ajaxMarkFound');
 
-// Admin panel route (protected)
-Route::get('/admin', function () {
-    $lostItems = \App\Models\LostItem::all();
-    return view('admin', compact('lostItems'));
-})->middleware('auth')->name('admin');
+// Admin panel route (protected, now uses controller for search)
+Route::get('/admin', [App\Http\Controllers\LostController::class, 'admin'])->middleware('auth')->name('admin');
 
 // Found Items History route (protected)
 Route::get('/found-history', function () {

@@ -1,6 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    body {
+        background: linear-gradient(135deg, #1a2233 0%, #28416e 100%) fixed;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+    .card {
+        background: #22325a;
+        color: #fff;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 2px 16px rgba(40,65,110,0.15);
+    }
+    .card-header {
+        background: #28416e;
+        color: #fff;
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.25rem;
+        border-radius: 1rem 1rem 0 0;
+    }
+    .form-control {
+        background: #1a2233;
+        color: #fff;
+        border: 1px solid #28416e;
+    }
+    .form-control:focus {
+        background: #22325a;
+        color: #fff;
+        border-color: #4b6fae;
+        box-shadow: 0 0 0 0.2rem rgba(40,65,110,0.15);
+    }
+    .form-check-input:checked {
+        background-color: #28416e;
+        border-color: #28416e;
+    }
+    .btn-primary {
+        background-color: #28416e;
+        border-color: #28416e;
+        color: #fff;
+        font-weight: 600;
+    }
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: #3a5a99;
+        border-color: #3a5a99;
+        color: #fff;
+    }
+    .btn-link {
+        color: #4b6fae;
+    }
+    .btn-link:hover, .btn-link:focus {
+        color: #28416e;
+        text-decoration: underline;
+    }
+    .invalid-feedback {
+        color: #ffb3b3;
+    }
+</style>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
